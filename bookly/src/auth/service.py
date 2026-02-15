@@ -22,11 +22,15 @@ class UserService:
     async def create_user(self, user_data: UserCreateModel, session: AsyncSession):
         user_data_dict = user_data.model_dump()
 
+        password = user_data_dict.pop('password')
+        password_hash = generate_passwd_hash(password)
+
         new_user = User(
             **user_data_dict
         )
 
-        new_user.password_hash = generate_passwd_hash(user_data_dict['password'])
+        new_user.password_hash = generate_passwd_hash(user_data_dict["password"])
+        new_user.role = "user"
 
         session.add(new_user)
 
